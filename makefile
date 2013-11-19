@@ -6,6 +6,9 @@ sort:	sort.o
 	gcc -g -Wall sort.o -o sort
 	rm -f sort.o
 
+wordcount:	wordcount.c
+	gcc -g -Wall wordcount.c -o wordcount
+
 search:	search.o
 	gcc -g -Wall search.o -o search
 
