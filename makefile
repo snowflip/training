@@ -9,6 +9,9 @@ sort:	sort.o
 wordcount:	wordcount.c
 	gcc -g -Wall wordcount.c -o wordcount
 
+dimenarray:	dimenarray.c
+	gcc -g -Wall dimenarray.c -o dimenarray
+
 search:	search.o
 	gcc -g -Wall search.o -o search
 
