@@ -17,11 +17,20 @@ struct point makepoint(x, y) {
 	return p;
 }
 
+char* printmonth(int n)
+{
+	static char *month[] = {"illegal month", "Jan", "Feb", "Mar",
+				"April", "May", "June", "July", "August",
+				"Sep", "Oct", "Nov", "Dem"};
+	
+	return month[n];
+}
 
 int main()
 {
-	Point p = makepoint(2, 3);
-	printf("%d %d\n", p.x, p.y);
-
+	//Point p = makepoint(2, 3);
+	//printf("%d %d\n", p.x, p.y);
+	char *a = printmonth(1);
+	printf("a is %s\n", a);
 	return 0;
 }
