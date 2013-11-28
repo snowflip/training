@@ -15,25 +15,35 @@ struct nlist *hashtab[HASHSIZE];
 
 unsigned hash(char *s)
 {
-	int hashval;
+	unsigned hashval;
+
 	for (hashval = 0; *s != '\0'; s++) 
 		hashval = *s * 31 + hashval;
-	
 	return hashval % HASHSIZE;
 }
 
 struct nlist *lookup(char *s)
 {
+/*
 	struct nlist *head = hashtab[hash(s)];
 	if (head != NULL) 
 		for (; head != NULL; head = head->next)
 			if (strcmp(s, head->name) == 0)
 				return head;
 	return NULL;
+*/
+	/* K&R code */
+	struct nlist *np;
+
+	for (np = hashtab[hash(s)]; np != NULL; np = np->next)
+		if (strcmp(s, np->name) == 0)
+			return np;
+	return NULL;
 }
 
 struct nlist *install(char *name, char *defn)
 {
+/*
 	struct nlist *node;
 	if ((node = lookup(name)) != NULL)
 		strcpy(node->defn, defn);
@@ -47,7 +57,24 @@ struct nlist *install(char *name, char *defn)
 	}
 
 	return node;
+*/
+	/* K&R code */
+	struct nlist *np;
+	unsigned hashval;
+	if ((np = lookup(name)) == NULL) {
+		np = (struct nlist *)malloc(sizeof(struct nlist));
+		if ((np == NULL) || ((np->name = strdup(name)) == NULL))
+		     return NULL;
+		hashval = hash(name);
+		np->next = hashtab[hashval];
+		hashtab[hashval] = np;
+	} else
+		free((void *) np->defn);
+	if ((np->defn = strdup(defn)) == NULL)
+	     return NULL;
+	return np;
 }
+	
 
 void freehashtab()
 {
