@@ -1,6 +1,6 @@
 OBJS = sort.o search.o string.o
 
-all:	sort search string clean
+all:	sort hash wordcount tree dimenarray struct search string clean
 
 sort:	sort.o 
 	gcc -g -Wall sort.o -o sort
@@ -17,14 +17,15 @@ tree:	tree.c
 
 dimenarray:	dimenarray.c
 	gcc -g -Wall dimenarray.c -o dimenarray
+
 struct:	struct.c
 	gcc -g -Wall struct.c -o struct
 
-search:	search.o
-	gcc -g -Wall search.o -o search
+search:	search.c
+	gcc -g -Wall search.c -o search
 
-string:string.o
-	gcc -g -Wall string.o -o string
+string:	string.c
+	gcc -g -Wall string.c -o string
 
 clean:
 	rm -f  $(OBJS)

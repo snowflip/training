@@ -19,6 +19,82 @@ int strlen(char *s)
 	return p - s;
 }
 
+char *strcpy(char *s, char *ct)
+{
+	char *p;
+	
+	p = s;
+	while ((*p++ = *ct++) != '\0')
+		;
+	return s;
+}
+
+
+char *strncpy(char *s, char *ct, int n)
+{
+	char *p;
+	
+	p = s;
+	while (((*p++ =*ct++) != '\0') && (--n > 0))
+		;
+	if (n == 0) *p = '\0';
+	return s;
+}
+
+char *strcat(char *s, char *ct)
+{
+	char *p;
+
+	p = s + strlen(s);
+	while ((*p++ = *ct++) != '\0')
+		;
+	return s;
+}
+
+char *strncat(char *s, char *ct, int n)
+{
+	char *p;
+
+	p = s + strlen(s);
+	while (((*p++ = *ct++)) != '\0' && --n > 0)
+		;
+	if (n == 0) *p = '\0';
+	return s;
+}
+
+int strspn(char *cs, char *ct)
+{
+	int c;
+	char *s, *t;
+
+	t = ct;
+	s = cs;
+	while ((c = *s) != '\0') {
+		for (t = ct; *t != '\0'; t++) 
+			if (*t == c) break;
+		if (*t == '\0') break;
+		s++;
+	}
+	return s - cs;
+}
+
+int strcspn(char *cs, char *ct)
+{
+	int c;
+	char *s, *t;
+	
+	s = cs;
+	t = ct;
+	
+	while ((c = *s) != '\0') {
+		for (t = ct; ((*t != '\0') && (*t != c)); t++)
+			;
+		if (*t == c) break;
+		s++;
+	}
+	return s - cs;
+}
+
 void reverse(char *s)
 {
 /*
@@ -209,7 +285,8 @@ char *strrchr(char *s, int c)
 }
 
 int  main() {
-     char s[] = "aaabaabaa";
+     char s[20] = "bbbb";
+     char *a;
      //char d[] = "aaa";
      //char *p;
      //char s[] = " c  aaa bbb d   ";
@@ -221,10 +298,10 @@ int  main() {
      //printf("%s\n", d);
      //p = strstr(s, d);     
      //trim_single(s);
+     //int n = strcspn(s, "y");
+     //printf("n is %d\n", n);
+     a = strncat(s, "aaaaaaa", 2);
      printf("s is %s\n", s);
-     char *q = strchr(s, 'a');
-     printf("strchr is %s\n", q);
-     char *p = strrchr(s, 'a');
-     printf("strrchr is %s\n", p);
+     printf("s is %s\n", a);
      return 0;
 }

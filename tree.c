@@ -3,6 +3,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#define MAXWORD 100
+
 struct countnode {
 	char *word;
 	int count;
@@ -12,105 +14,108 @@ struct countnode {
 
 char *sdup(char *s)
 {
-	char *n = (char *)malloc(sizeof(strlen(s) + 1));
-	strcpy(n ,s);
-	return n;
+	char *p;
+
+	//p = (char *)malloc(sizeof(strlen(s)+1));
+	//k&R code
+	p = (char *)malloc(strlen(s)+1);
+	if (p != NULL)
+	    strcpy(p ,s);
+	return p;
 }
 
-struct countnode *addtree(struct countnode *node, char *s)
+struct countnode *addtree(struct countnode *p, char *w)
 {
 	int cond;
-	if (node == NULL) {
-		node = malloc(sizeof(struct countnode));
-		node->word = sdup(s);
-		node->count = 1;
-		return node;
-	} 
 
-	if ((cond = strcmp(s, node->word)) == 0) {
-		node->count++;
-	} else if (cond < 0) {
-		node->left = addtree(node->left, s);
-	}
-	else {
-		node->right = addtree(node->right, s);
-	}
-	
-	return node;
+	if (p == NULL) {
+		p = (struct countnode *)malloc(sizeof(struct countnode));
+		if ((p->word = sdup(w)) == NULL) return NULL;
+		p->count = 1;
+		p->left = p->right = NULL;
+		//return p;
+	} else if ((cond = strcmp(w, p->word)) == 0) 
+	     p->count++;
+	else if (cond < 0) 
+	     p->left = addtree(p->left, w);
+	else 
+	     p->right = addtree(p->right, w);
+	return p;
 }
 
-void printtree(struct countnode *n)
+void treeprint(struct countnode *p)
 {
-	if (n != NULL) {
-		printtree(n->left);
-		printf("%s %d\n", n->word, n->count);
-		printtree(n->right);
+	if (p != NULL) {
+		treeprint(p->left);
+		printf("%s %d\n", p->word, p->count);
+		treeprint(p->right);
 	}
 }
 
-void releasetree(struct countnode *n)
+void releasetree(struct countnode *p)
 {
-	if (n != NULL) {
-		releasetree(n->left);
-
-		if (n->word != NULL) {
-			free(n->word);
-			n->word = NULL;
+	if (p != NULL) {
+		releasetree(p->left);
+		if (p->word != NULL) {
+			free(p->word);
+			p->word = NULL;
 		}
-
-		releasetree(n->right);
-
-		free(n);
-		n = NULL;
+		releasetree(p->right);
+		free(p);
+		p = NULL;
 	}
 }
 
 int getword(FILE *fp, char *word, int lim)
 {
-	int ch;
+	int c;
 	char *w = word;
 
-	while (isspace(ch = fgetc(fp)))
+	while (isspace(c = fgetc(fp)))
 		;
-	
-	if (!isalpha(ch)) {
-		if (ch == EOF) *w = '\0';
+	if (c != EOF)
+	    *w++ = c;
+	if (!isalpha(c)) {
+		*w = '\0';
+		return c;
+	}
+/*
+	if (!isalpha(c)) {
+		if (c == EOF) *w = '\0';
 		else {
-			*w++ = ch;
+			*w++ = c;
 			*w = '\0';
 		}
-		return ch;
+		return c;
 	}
 	
-	for (*w++ = ch; --lim > 0; w++) {
+	for (*w++ = c; --lim > 0; w++) {
+*/
+	for (; --lim > 0; w++) {
 		if (!isalnum(*w = fgetc(fp))) {
 			ungetc(*w, fp);
 			break;
 		}
 	}
 	*w = '\0';
-
 	return word[0];
 }
 
 int main() 
 {
-	char s[10];
+	char word[MAXWORD];
 	struct countnode *root = NULL;
 	FILE *fp = fopen("2.txt", "r");
 	if (fp != NULL) {
-		while (getword(fp, s, 10) != EOF) {
-			if (isalpha(s[0])) {
-				printf("%s\n", s);
-				root = addtree(root, s);
+		while (getword(fp, word, 10) != EOF) {
+			if (isalpha(word[0])) {
+				printf("%s\n", word);
+				root = addtree(root, word);
 			}
 		}
+		fclose(fp);
 	}
-
-
-	printtree(root);
-	
+	treeprint(root);
 	releasetree(root);
-
 	return 0;
 }
