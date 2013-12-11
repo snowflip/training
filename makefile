@@ -1,10 +1,14 @@
 OBJS = sort.o search.o string.o
 
-all:	sort hash wordcount tree dimenarray struct search string clean
+all:	squeeze sort hash wordcount tree dimenarray struct search string clean
 
 sort:	sort.o 
 	gcc -g -Wall sort.o -o sort
 	rm -f sort.o
+
+squeeze:	squeeze.o 
+	gcc -g -Wall squeeze.o -o squeeze
+	rm -f squeeze.o
 
 hash:	hash.c
 	gcc -g -Wall hash.c -o hash

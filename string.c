@@ -1,5 +1,8 @@
 #include <stdio.h>
-
+#ifdef strncpy
+	undef strncpy
+#endif
+	
 int strlen(char *s)
 {
 /*
@@ -32,6 +35,7 @@ char *strcpy(char *s, char *ct)
 
 char *strncpy(char *s, char *ct, int n)
 {
+/*   
 	char *p;
 	
 	p = s;
@@ -39,6 +43,21 @@ char *strncpy(char *s, char *ct, int n)
 		;
 	if (n == 0) *p = '\0';
 	return s;
+*/
+    /*minix code*/
+    char *p;
+
+    p = s;
+    if (n > 0) {
+	while ((*p++ = *ct++) != '\0' && (--n > 0))
+	    ;
+	if ((*--ct == '\0') && --n > 0) {
+	    do {
+		*p++ = '\0';
+	    } while(--n > 0);
+	}
+    }
+    return s;
 }
 
 char *strcat(char *s, char *ct)
@@ -60,6 +79,71 @@ char *strncat(char *s, char *ct, int n)
 		;
 	if (n == 0) *p = '\0';
 	return s;
+
+	/*minix code
+   	char *p;
+
+	p = s;
+	if (n > 0) {
+	    while (*p++ != '\0')
+		    ;
+	    p--;
+	    while ((*p++ = *ct++) != '\0') {
+		if (--n > 0) continue;
+		*p = '\0';
+		break;
+	    }
+	}
+	return s;*/
+}
+
+int strcmp(char *cs, char *ct)
+{
+    /*
+	int c;
+	char *s, *t;
+	
+	s = cs; 
+	t = ct;
+	while ((*s != '\0') && (*t != '\0')) {
+		c = *s - *t;
+		if (c != 0) return c;
+		s++;
+		t++;
+	}
+	return *s - *t;
+    */
+    /*K & R code nice*/
+    for ( ; *cs == *ct; cs++, ct++)
+	if (*cs == '\0')
+	    return 0;
+    return *cs - *ct;
+}
+
+int strncmp(char *cs, char *ct, int n)
+{
+/*
+	int c;
+	char *s, *t;
+	
+	s = cs; 
+	t = ct;
+	while ((*s != '\0') && (*t != '\0') && (--n > 0)) {
+		c = *s - *t;
+		if (c != 0) return c;
+		s++;
+		t++;
+	}
+	return *s - *t;
+*/
+    if (n) {
+	for ( ; *cs == *ct; cs++, ct++, n--) {
+	    if (n == 0) break;
+	    if (*cs == 0) return 0;
+	}
+	return *cs - *ct;
+    }
+    return 0;
 }
 
 int strspn(char *cs, char *ct)
@@ -93,6 +177,44 @@ int strcspn(char *cs, char *ct)
 		s++;
 	}
 	return s - cs;
+}
+
+char *strpbrk(char *cs, char *ct)
+{
+	int c;
+	char *s, *t;
+
+	s = cs;
+	while ((c = *s) != '\0') {
+		for (t = ct; *t != '\0'; t++) 
+			if (c == *t) return s;
+		s++;
+	}
+	return NULL;
+}
+
+char *strtok(char *s, char *ct)
+{
+	static char *sp;
+	int n;
+	char *t, *f;
+	static char r[100];
+	static int index = 0;
+
+	if (s != NULL) {
+		sp = strdup(s);
+	}
+
+	n = strspn(sp + index, ct);
+	t = sp + index + n;
+	if (*t == '\0') {
+		free(sp);
+		return NULL;
+	}
+	f = strpbrk(t, ct);
+	strncpy(r, t, f - t);
+	index = index + n + f - t;
+	return r;
 }
 
 void reverse(char *s)
@@ -285,9 +407,6 @@ char *strrchr(char *s, int c)
 }
 
 int  main() {
-     char s[20] = "bbbb";
-     char *a;
-     //char d[] = "aaa";
      //char *p;
      //char s[] = " c  aaa bbb d   ";
      //char s[] = "      a       ";
@@ -300,8 +419,18 @@ int  main() {
      //trim_single(s);
      //int n = strcspn(s, "y");
      //printf("n is %d\n", n);
-     a = strncat(s, "aaaaaaa", 2);
-     printf("s is %s\n", s);
-     printf("s is %s\n", a);
-     return 0;
+//	char str[] ="- This, a sample string.";
+//	char * pch;
+//	printf ("Splitting string \"%s\" into tokens:\n",str);
+//	pch = strtok (str," ,.-");
+//	while (pch != NULL)
+//	{
+//	    printf ("%s\n",pch);
+//	    pch = strtok (NULL, " ,.-");
+//	}
+     	char s[] = "abcde";
+	char d[] = "efg";
+	strncpy(s, d, 6);
+	printf("%s\n", s);
+     	return 0;
 }

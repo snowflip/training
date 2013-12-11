@@ -5,9 +5,9 @@
 #define HASHSIZE 101
 
 struct nlist {
-	struct nlist *next;
-	char *name;
-	char *defn;
+    struct nlist *next;
+    char *name;
+    char *defn;
 };
 
 struct nlist *hashtab[HASHSIZE];
@@ -15,11 +15,11 @@ struct nlist *hashtab[HASHSIZE];
 
 unsigned hash(char *s)
 {
-	unsigned hashval;
+    unsigned hashval;
 
-	for (hashval = 0; *s != '\0'; s++) 
-		hashval = *s * 31 + hashval;
-	return hashval % HASHSIZE;
+    for (hashval = 0; *s != '\0'; s++) 
+	hashval = *s * 31 + hashval;
+    return hashval % HASHSIZE;
 }
 
 struct nlist *lookup(char *s)
@@ -33,12 +33,12 @@ struct nlist *lookup(char *s)
 	return NULL;
 */
 	/* K&R code */
-	struct nlist *np;
+    struct nlist *np;
 
-	for (np = hashtab[hash(s)]; np != NULL; np = np->next)
-		if (strcmp(s, np->name) == 0)
-			return np;
-	return NULL;
+    for (np = hashtab[hash(s)]; np != NULL; np = np->next)
+	if (strcmp(s, np->name) == 0)
+	    return np;
+    return NULL;
 }
 
 struct nlist *install(char *name, char *defn)
